@@ -13,6 +13,9 @@ const Container = styled.div`
   margin-top: 5rem;
   display: grid;
   grid-template-columns: 1.5fr 5fr;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
 `;
 
 const Title = styled.span`
@@ -22,6 +25,9 @@ const Title = styled.span`
 const LeftSection = styled.div`
   padding: 1rem;
   display: flex;
+  height: 100%;
+
+  overflow: hidden;
   flex-direction: column;
   background-color: white;
   box-shadow: 2px 3px 7px #dbdadb99;
@@ -45,6 +51,8 @@ const SelectInput = styled.select`
 const RightSection = styled.div`
   display: flex;
   margin: 1rem;
+  overflow: scroll;
+  height: 100%;
   flex-direction: column;
 `;
 
@@ -71,6 +79,7 @@ const Grid = styled.div`
 
 const Column = styled.div`
   display: flex;
+  height: 100%;
   margin: 1rem;
   flex-direction: column;
 `;

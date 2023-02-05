@@ -10,10 +10,14 @@ import ProductListPage from "./Pages/ProductListPage";
 import { Route, Routes  } from "react-router-dom";
 import ProductDeatilPage from './Pages/ProductDeatilPage';
 import { redirect } from "react-router-dom";
+import Success from "./Pages/Success";
+import { useSelector } from 'react-redux';
 
 function App() {
 
-   const user = true;
+  
+
+   const user = useSelector(state => state.user.userdata)
 
   return (
     <div className="App">
@@ -33,6 +37,8 @@ function App() {
         <Route path="/cart" element={ user?<CartPage/>:<LoginPage/>} />
         <Route path="/categories/:id" element={<ProductListPage/>} />
         <Route path="/product/:id" element={<ProductDeatilPage/>} />
+        <Route path="/success" element={<Success/>} />
+
 
 
         <Route path="/search" element={<SearchResult/>} />

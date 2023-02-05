@@ -12,6 +12,7 @@ import axios from "axios";
 
 import {
   Button,
+  ButtonBase,
   Collapse,
   List,
   ListItemButton,
@@ -22,6 +23,14 @@ import {
 import { BsGlobe } from "react-icons/bs";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import { useLocation } from "react-router-dom";
+
+// Redux
+// call the action type import
+import { addProducts } from "../Redux/cartRedux";
+// useDispatch method to activate the action
+import { useDispatch } from "react-redux";
+
+
 
 const Container = styled.div`
   margin-top: 5rem;
@@ -52,6 +61,7 @@ const ImageList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  z-index: 10;
 `;
 
 const ProductImage = styled.img`
@@ -59,6 +69,8 @@ const ProductImage = styled.img`
   padding: 1rem;
   height: 400px;
   object-fit: contain;
+  /* transform: scale(1.2); */
+  /* z-index: 10; */
   width: 100%;
 `;
 
@@ -291,10 +303,16 @@ const ProductDeatilPage = () => {
 
   const [stripeToken, setStripeToken] = useState(null);
 
+  const [quantityHolder, setQuantityHolder] = useState(false);
+
   console.log(stripeToken);
+
+  console.log("quantity Holder :" + quantityHolder);
 
   const location = useLocation();
   const productID = location.pathname.split("/")[2];
+
+  const [quantityCount, setQuantityCount] = useState(1);
 
   const [productDetail, setProductDetail] = useState({});
   const [productImage, setProductImage] = useState(
@@ -302,13 +320,21 @@ const ProductDeatilPage = () => {
       ? productDetail.productImage[0]
       : "https://via.placeholder.com/150"
   );
-
   console.log(productImage);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
 
-const discount = Number(productDetail.productCrossprice) - Number(productDetail.productPrice)
-const discountPercent = discount/Number(productDetail.productCrossprice)*100
-const discountValue =  Math.round(discountPercent);
+  
 
+
+
+  // Discount Percent calculation
+  const discount =
+    Number(productDetail.productCrossprice) -
+    Number(productDetail.productPrice);
+  const discountPercent =
+    (discount / Number(productDetail.productCrossprice)) * 100;
+  const discountValue = Math.round(discountPercent);
 
   console.log(productDetail);
   useEffect(() => {
@@ -349,6 +375,8 @@ const discountValue =  Math.round(discountPercent);
     setStripeToken(token);
   };
 
+  console.log(color);
+
   useEffect(() => {
     const TokenRequest = async () => {
       try {
@@ -366,8 +394,43 @@ const discountValue =  Math.round(discountPercent);
     stripeToken && TokenRequest();
   }, [stripeToken]);
 
-  const KEY =
-    "pk_test_51MNCrUSAiZ4DFG1TC8CUkvrowHhONPbCn68gyPp5qWxzTmKKpyAyCHHgPBotE5GBFABRuOh495CQ4yXHy4uozVbo00btz25QXi";
+  const KEY = process.env.STRIPE_PUBLIC_KEY
+    
+
+
+
+    // redux dispatch
+
+  const dispatch = useDispatch();
+
+    const  handleCartUpdate = () => {
+      dispatch(
+        addProducts({
+          ...productDetail,
+          quantityCount,
+          color,
+          size,
+          // product: productDetail,
+          // quanity: quantityCount,
+          // price: productDetail.productPrice * quantityCount ,
+        })
+      );
+
+    }
+
+
+  const handleChangeCount = (type) => {
+   
+
+    if (type === "dec") {
+      {
+        quantityCount > 1 && setQuantityCount(quantityCount - 1);
+      }
+    } else {
+      setQuantityCount(quantityCount + 1);
+    }
+  };
+  console.log(quantityCount);
 
   return (
     <Container>
@@ -378,8 +441,8 @@ const discountValue =  Math.round(discountPercent);
             image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTURTTkB9LI4rkWf9_oJfdTIB0KplC6jnfL8RXiZmj0Gw&s"
             billingAddress
             shippingAddress
-            description="Your total amount is 1700 Rs"
-            amount={170000}
+            description={`Your total amount is ${productDetail.productPrice} Rs`}
+            amount={productDetail.productPrice}
             token={onToken}
             currency="INR"
             stripeKey={KEY}
@@ -401,7 +464,13 @@ const discountValue =  Math.round(discountPercent);
           <ImageList>
             {productDetail.productImage && productDetail.productImage[0] ? (
               <NextImage
-                onClick={() => setProductImage(productDetail&&productDetail.productImage&&productDetail.productImage[0])}
+                onClick={() =>
+                  setProductImage(
+                    productDetail &&
+                      productDetail.productImage &&
+                      productDetail.productImage[0]
+                  )
+                }
                 src={productDetail.productImage[0]}
               />
             ) : (
@@ -409,7 +478,13 @@ const discountValue =  Math.round(discountPercent);
             )}
             {productDetail.productImage && productDetail.productImage[1] ? (
               <NextImage
-                onClick={() =>setProductImage(productDetail&&productDetail.productImage&&productDetail.productImage[0])}
+                onClick={() =>
+                  setProductImage(
+                    productDetail &&
+                      productDetail.productImage &&
+                      productDetail.productImage[0]
+                  )
+                }
                 src={productDetail.productImage[1]}
               />
             ) : (
@@ -417,12 +492,24 @@ const discountValue =  Math.round(discountPercent);
             )}
             {productDetail.productImage && productDetail.productImage[2] && (
               <NextImage
-                onClick={() => setProductImage(productDetail&&productDetail.productImage&&productDetail.productImage[1])}
+                onClick={() =>
+                  setProductImage(
+                    productDetail &&
+                      productDetail.productImage &&
+                      productDetail.productImage[1]
+                  )
+                }
               />
             )}
             {productDetail.productImage && productDetail.productImage[3] && (
               <NextImage
-                onClick={() => setProductImage(productDetail&&productDetail.productImage&&productDetail.productImage[2])}
+                onClick={() =>
+                  setProductImage(
+                    productDetail &&
+                      productDetail.productImage &&
+                      productDetail.productImage[2]
+                  )
+                }
               />
             )}
             {productDetail.productImage && productDetail.productImage[4] && (
@@ -454,7 +541,10 @@ const discountValue =  Math.round(discountPercent);
               <AiOutlineStar />
             </StartRating>
             <AiOutlineDown />
-             <TextSmall> {productDetail.productRating} ratings | 570 answered questions</TextSmall>
+            <TextSmall>
+              {" "}
+              {productDetail.productRating} ratings | 570 answered questions
+            </TextSmall>
           </RatingandReview>
           <Badge>
             <Vijay>Vijay</Vijay> Amazon
@@ -464,7 +554,7 @@ const discountValue =  Math.round(discountPercent);
           <span style={{ color: "#cc0c39" }}> Deal</span>
           <span style={{ color: "#cc0c39" }}>
             {" "}
-            {  discountValue } % Offer  <Price>₹{productDetail.productPrice}</Price>{" "}
+            {discountValue} % Offer <Price>₹{productDetail.productPrice}</Price>{" "}
           </span>
           <SalePrice>
             M.R.P : <CrossPrice>₹{productDetail.productCrossprice} </CrossPrice>{" "}
@@ -554,18 +644,17 @@ const discountValue =  Math.round(discountPercent);
               <List component="div" disablePadding>
                 {productDetail &&
                   productDetail.productImage &&
-                  productDetail.productImage.map((image,index) => (
+                  productDetail.productImage.map((image, index) => (
                     <CollapseImage
-                    key={image.index}
+                      key={image.index}
                       style={{
                         width: "90px",
                         height: "90px",
                         objectFit: "contain",
                         cursor: "pointer",
                       }}
-                      src={
-                       image
-                      }
+                      onClick={() => setColor(image)}
+                      src={image}
                       alt=""
                     />
                   ))}
@@ -650,16 +739,27 @@ const discountValue =  Math.round(discountPercent);
                   </span>
                   <span>
                     {" "}
-                   Product Details : <span style={{ color: "orange" }}> {productDetail.productDetails} </span>{" "}
+                    Product Details :{" "}
+                    <span style={{ color: "gray" , fontSize:"9", fontWeight:"300" }}>
+                      {" "}
+                      {productDetail.productDetails}{" "}
+                    </span>{" "}
                   </span>
                   <span>
                     {" "}
-                    Instock : <span style={{ color: "orange" }}> {productDetail.instockCount
-} </span>{" "}
+                    Instock :{" "}
+                    <span style={{ color: "orange" }}>
+                      {" "}
+                      {productDetail.instockCount}{" "}
+                    </span>{" "}
                   </span>
                   <span>
                     {" "}
-                    Product Star Rating  : <span style={{ color: "orange" }}> {productDetail.productStar} / 5 </span>{" "}
+                    Product Star Rating :{" "}
+                    <span style={{ color: "orange" }}>
+                      {" "}
+                      {productDetail.productStar} / 5{" "}
+                    </span>{" "}
                   </span>
                 </Column>
               </List>
@@ -687,6 +787,7 @@ const discountValue =  Math.round(discountPercent);
                 fontSize: "11.4px",
                 backgroundColor: "orange",
               }}
+              onClick={() => handleCartUpdate()}
             >
               {" "}
               Add to Cart
@@ -704,6 +805,39 @@ const discountValue =  Math.round(discountPercent);
               Buy Now
             </Button>
           </div>
+         
+            <div>
+              <Button
+                onClick={() => handleChangeCount("dec")}
+                style={{
+                  backgroundColor: "orange",
+                  marginRight: "12px",
+                }}
+                variant="contained"
+              >
+                -
+              </Button>
+              <span
+                style={{
+                  fontSize: "18px",
+                  fontWeight: "500",
+                }}
+              >
+                {quantityCount}
+              </span>
+              <Button
+                onClick={() => handleChangeCount("inc")}
+                style={{
+                  marginLeft: "12px",
+                  backgroundColor: "orange",
+                }}
+                variant="contained"
+              >
+                {" "}
+                +{" "}
+              </Button>
+            </div>
+          
         </CardPlaceSection>
       </Grid>
     </Container>

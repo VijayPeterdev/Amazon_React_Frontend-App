@@ -1,6 +1,7 @@
 import React from 'react'
 import  styled  from 'styled-components';
 import SearchDetails from '../Components/SearchDetails';
+import Filter from './../Components/Filter';
 
 
 
@@ -10,11 +11,21 @@ grid-template-columns: 1.2fr 4fr;
 margin-top: 8rem;
 `;
 
+const Wrapper = styled.div`
+display: flex;
+margin: 2px;
+margin-left: 12px;
+margin-right: -30px;
+`;
+
 
 const SearchResult = () => {
   return (
     <GridContainer>
-        <span>Left</span>
+      <Wrapper>
+      <Filter/>
+      </Wrapper>
+       
         <SearchDetails/>
 
 

@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { MdOutlineArrowRight } from "react-icons/md";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import SiteLogoAmazon from "../Assets/amazonlogoblack.png";
+import { Login } from "../Redux/ApiRequest";
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const SiteLogo = styled.img`
   width: 150px;
@@ -73,6 +76,10 @@ const Button = styled.button`
   height: 50rem;
   padding: 7px;
   background-color: #f2cc6a;
+
+  &:disabled {
+    background-color: #e2e2e283;
+  }
 `;
 
 const FontMini = styled.span`
@@ -155,6 +162,28 @@ const Grayholder = styled.div`
 `;
 
 const LoginPage = () => {
+
+   const [email, setEmail] = useState("");
+
+   const [password, setPassword] = useState("");
+
+    const {isFetching,error,errordata}  = useSelector(state => state.user);
+   const dispatch = useDispatch();
+
+   const handleLogin = (e) => {
+
+
+    e.preventDefault();
+
+
+     Login(dispatch,{ email,password})
+
+
+
+   }
+
+   
+
   return (
     <Container>
       <Vijay>விஜய் </Vijay>
@@ -163,11 +192,15 @@ const LoginPage = () => {
       <LoginHolder>
         <Text1> Sign in</Text1>
         <Text2>Email or mobile phone number</Text2>
-        <Input type="text" placeholder="" />
+        <Input type="text" placeholder="" onChange={(e) => setEmail(e.target.value)}   />
         <Text2 style={{marginTop:"12px"}}>Password</Text2>
-        <Input type="password" placeholder="" />
-        <Button>Continue</Button>
+        <Input type="password" placeholder=""  onChange={(e) =>setPassword(e.target.value) }  />
+        <Button  disabled={isFetching}  onClick={handleLogin}>Continue</Button>
 
+         {error && <span style={{color:"orange" , textAlign:"center",marginTop:"12px",width:"330px"}}>somthing wrong ⚠️  </span>}
+         {error && <span style={{
+          color:"orange"
+         }}>please enter valid username and password </span>}
         <FontMini>
           By continuing, you agree to Amazon's Conditions of Use and Privacy
           Notice.

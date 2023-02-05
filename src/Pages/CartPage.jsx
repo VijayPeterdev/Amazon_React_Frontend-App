@@ -1,27 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { AiFillStar } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Button } from "@mui/material";
+import StripeCheckout from "react-stripe-checkout";
+import axios from "axios";
+import { UserRequest } from "../AxiosRequestMethod";
+import env from "react-dotenv";
 
 const Container = styled.div`
   display: grid;
   background-color: #d1cece72;
 
   grid-template-columns: 8fr 3fr;
-  margin-top: 4.5rem;
+
   gap: 1rem;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  margin-top: 4rem;
 `;
 
 const LeftCardSection = styled.div`
   padding: 2rem;
+
   gap: 2rem;
-  margin-top: -7rem;
+
   box-shadow: 2px 3px 7px #d1d0d09c;
   margin: 1.2rem;
   background-color: white;
   align-self: flex-start;
+  justify-content: flex-start;
 
   display: flex;
 `;
@@ -103,33 +112,208 @@ const RatingStar = styled.div`
   color: orange;
 `;
 
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+`;
+const ProductHolder = styled.div`
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+`;
+
+const ProductImage = styled.img`
+  width: 120px;
+  height: 120px;
+
+  object-fit: contain;
+`;
+
 const CartPage = () => {
   const [trimName, setTrimName] = useState("");
 
+  const product = useSelector((state) => state.cart.products);
+  const cartData = useSelector((state) => state.cart);
+
+  console.log("productlength" + product.length);
+
+  // Payment checkout
+
+  const [stripeToken, setStripeToken] = useState(null);
+
+  const KEY = window.env.STRIPE_PUBLIC_KEY;
+
+  const onToken = (token) => {
+    setStripeToken(token);
+  };
+
+  console.log(stripeToken);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const TokenRequest = async () => {
+      try {
+        const res = await UserRequest.post("/payment", {
+          tokenid: stripeToken.id,
+          amount: cartData.cartTotalPrice * 100,
+        });
+
+        navigate("/", { replace: true });
+
+        console.log("Server Response" + res.data);
+      } catch (err) {
+        navigate("/", { replace: true });
+
+        console.log(err);
+      }
+    };
+
+    stripeToken && cartData.cartTotalPrice >= 1 && TokenRequest();
+  }, [stripeToken, cartData.cartTotalPrice]);
+
   return (
     <Container>
-      <LeftCardSection>
-        <CardImage
-          src="https://m.media-amazon.com/images/G/31/cart/empty/kettle-desaturated._CB424694257_.svg"
-          alt="cardlogo"
-        />
+      {product.length > 0 ? (
+        <>
+          <Column>
+            {product.map((productData) => (
+              <LeftCardSection>
+                <ProductHolder>
+                  <ProductImage src={productData.productImage} alt="" />
 
-        <CardColumn>
-          <h3>Your Amazon Cart is empty</h3>
-          <SmallFont>Shop today’s deals</SmallFont>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <span style={{ fontSize: "17px", fontWeight: "bold" }}>
+                      {productData.productName}
+                    </span>
+                    <span style={{ color: "green" }}>In stock</span>
+                    <span>Prodct ID : {productData._id}</span>
+                    <span
+                      style={{
+                        fontFamily: "400",
+                        fontSize: "17px",
+                        color: "#0185e4",
+                      }}
+                    >
+                      {" "}
+                      Eligible for FREE Shipping{" "}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <span
+                      style={{
+                        fontSize: "17px",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      Quantity
+                    </span>
+                    <span
+                      style={{
+                        color: "green",
+                        textAlign: "center",
+                        marginTop: "20px",
+                      }}
+                    >
+                      {productData.quantityCount}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <span
+                      style={{
+                        fontSize: "17px",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      Product Price
+                    </span>
+                    <span style={{ color: "green", textAlign: "center" }}>
+                      1
+                    </span>
+                    <span style={{ textAlign: "center" }}>
+                      {productData.productPrice}
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Button style={{ fontSize: "30px", fontWeight: "bold" }}>
+                      -
+                    </Button>
+                    <span style={{ color: "green", textAlign: "center" }}>
+                      {productData.quantityCount}
+                    </span>
+                    <Button
+                      style={{
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: "24px",
+                      }}
+                    >
+                      +{" "}
+                    </Button>
+                  </div>
+                </ProductHolder>
+              </LeftCardSection>
+            ))}
+          </Column>
+        </>
+      ) : (
+        <LeftCardSection>
+          <CardImage
+            src="https://m.media-amazon.com/images/G/31/cart/empty/kettle-desaturated._CB424694257_.svg"
+            alt="cardlogo"
+          />
 
-          <RowCart>
-            <Link to={"/login"}>
-              <CartBtn1>Sign in to Your Account</CartBtn1>
-            </Link>
+          <CardColumn>
+            <h3>Your Amazon Cart is empty</h3>
+            <SmallFont>Shop today’s deals</SmallFont>
 
-            <Link to={"/signup"}>
-              <CartBtn2>Sign up now</CartBtn2>
-            </Link>
-          </RowCart>
-        </CardColumn>
-      </LeftCardSection>
+            <RowCart>
+              <Link to={"/login"}>
+                <CartBtn1>Sign in to Your Account</CartBtn1>
+              </Link>
+
+              <Link to={"/signup"}>
+                <CartBtn2>Sign up now</CartBtn2>
+              </Link>
+            </RowCart>
+          </CardColumn>
+        </LeftCardSection>
+      )}
+
       <RightCartSection>
+        <LeftCardSection
+          style={{
+            width: "300px",
+            backgroundColor: "#cac4c446",
+            flexDirection: "column",
+          }}
+        >
+          <h5>
+            SubTotal {cartData.cartTotalQuanity} Item :{" "}
+            <span style={{ color: "#9f0606" }}>{cartData.cartTotalPrice}</span>
+          </h5>
+          <h5>This Order Contains Gift</h5>
+          <StripeCheckout
+            name="விஜய் Amazon"
+            image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTURTTkB9LI4rkWf9_oJfdTIB0KplC6jnfL8RXiZmj0Gw&s"
+            billingAddress
+            shippingAddress
+            description={`Your total amount is  Rs ${cartData.cartTotalPrice}`}
+            amount={cartData.cartTotalPrice * 100}
+            token={onToken}
+            currency="INR"
+            stripeKey={
+              "pk_test_51MNCrUSAiZ4DFG1TC8CUkvrowHhONPbCn68gyPp5qWxzTmKKpyAyCHHgPBotE5GBFABRuOh495CQ4yXHy4uozVbo00btz25QXi"
+            }
+          >
+            <Button variant="contained" style={{ backgroundColor: "#ebad28" }}>
+              Proceed to checkout
+            </Button>
+          </StripeCheckout>
+        </LeftCardSection>
         <h4>Customers who bought items in your Recent History also bought</h4>
 
         <RecentBoughtCard>

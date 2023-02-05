@@ -12,9 +12,7 @@ const Token =
   export const PublicRequest = axios.create({
 
     baseURL : BASE_URL,
-    headers : {
-        token : "Bearer "+Token
-    },
+   
   })
 
 

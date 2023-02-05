@@ -6,19 +6,24 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   /* margin-top: 12px; */
-  margin: 40px 0px;
+  /* margin: 40px 0px; */
+
   width: 250px;
 
 
-  height: 250px;
+  height: 350px;
+  overflow: hidden;
   flex-direction: column;
 `;
 
 const ProductImage = styled.img`
-object-fit: cover;
-padding: 1rem;
+object-fit: contain;
+padding: 2rem;
+/* margin-top: -40px; */
+transform: scale(1.1);
+overflow: hidden;
 height: 350px;
-width:  ${({customwidth}) => customwidth ? customwidth : "180px"} ;  
+width:  ${({customwidth}) => customwidth ? customwidth : "280px"} ;  
 
 
 object-fit: cover;
@@ -33,11 +38,12 @@ const ProductDetails = styled.div`
 `;
 
 const Badge = styled.div`
-  width: 4rem;
+  width: 5rem;
+  /* margin-left: 12px; */
   height: 30px;
   border-radius: 12px;
   display: flex;
-  font-size: 12px;
+  font-size: 10px;
   align-items: center;
   justify-content: center;
   background-color: red;
@@ -49,6 +55,7 @@ const Price = styled.span`
   color: red;
 `;
 
+
 const SliderSingleProduct = ({
   productimg,
   productname,
@@ -56,6 +63,8 @@ const SliderSingleProduct = ({
   productoffer,
   customwidth,
 }) => {
+
+  
   return (
     <Container>
       <ProductImage
@@ -66,7 +75,7 @@ const SliderSingleProduct = ({
       <ProductDetails>
         <Badge>{productoffer}% offer</Badge>
 
-        <h5>{productname}</h5>
+        <h5 style={{color:"black" , listStyle:"none"}}>{productname.substring(0,40)+" ..."}</h5>
       </ProductDetails>
 
       <Price>{productprice} Rs</Price>

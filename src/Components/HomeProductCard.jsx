@@ -56,41 +56,41 @@ width: 16rem;
 margin-left: 12px;
 
 `;
-const HomeProductCard = ({ cardtitle }) => {
+const HomeProductCard = ({ cardtitle , productImage ,productname ,productname2,productImage2,productImage3,productname3,productname4,productImage4 }) => {
   return (
     <Container>
-      <Title>Up to 70% off | Styles for Women</Title>
+      <Title>{cardtitle}</Title>
 
       <ProductGrid>
         <Link to={"/categories/mobile"}>
         <ProductHolder>
           <ProductImage
-            src="https://images-eu.ssl-images-amazon.com/images/G/31/img22/Fashion/Gateway/BAU/BTF-Refresh/May/PC_WF/WF1-372-232._SY232_CB636048992_.jpg"
+            src={productImage}
             alt=""
           />
-          <Text1>Women's Clothing</Text1>
+          <Text1>{productname}</Text1>
         </ProductHolder>
         </Link>
         <ProductHolder>
           <ProductImage
-            src="https://images-eu.ssl-images-amazon.com/images/G/31/img22/Fashion/Gateway/BAU/BTF-Refresh/May/PC_WF/WF2-372-232._SY232_CB636048992_.jpg"
+            src={productImage2}
             alt=""
           />
-          <Text1>Women's Clothing</Text1>
+          <Text1>{productname2}</Text1>
         </ProductHolder>
         <ProductHolder>
           <ProductImage
-            src="https://images-eu.ssl-images-amazon.com/images/G/31/img22/Fashion/Gateway/BAU/BTF-Refresh/May/PC_WF/WF4-372-232._SY232_CB636048992_.jpg"
+            src={productImage3}
             alt=""
           />
-          <Text1>Women's Clothing</Text1>
+          <Text1>{productname3}</Text1>
         </ProductHolder>
         <ProductHolder>
           <ProductImage
-            src="https://images-eu.ssl-images-amazon.com/images/G/31/img22/Fashion/Gateway/BAU/BTF-Refresh/May/PC_WF/WF3-372-232._SY232_CB636048992_.jpg"
+            src={productImage4}
             alt=""
           />
-          <Text1>Women's Clothing</Text1>
+          <Text1>{productname4}</Text1>
         </ProductHolder>
       
       </ProductGrid>

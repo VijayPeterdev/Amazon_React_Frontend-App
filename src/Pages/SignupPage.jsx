@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { MdOutlineArrowRight } from "react-icons/md";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import SiteLogoAmazon from "../Assets/amazonlogoblack.png";
+import { Signup } from "../Redux/ApiRequest";
+
+import { useDispatch } from "react-redux";
 
 const SiteLogo = styled.img`
   width: 150px;
@@ -83,7 +86,7 @@ const FontMini = styled.span`
 const Center = styled.span`
   font-size: 12px;
 
- width: 300px;
+  width: 300px;
   display: flex;
   align-items: center;
   margin-top: 2rem;
@@ -154,14 +157,25 @@ const Grayholder = styled.div`
   background-color: #eaecef7e;
 `;
 
-
 const Small = styled.span`
-font-size: 12px;
-margin-top: 12px;
-width: 350px;
+  font-size: 12px;
+  margin-top: 12px;
+  width: 350px;
 `;
 
 const SignupPage = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phonenumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch();
+
+  const handleClick = (e) => {
+    e.preventDefault();
+
+    Signup(dispatch, { email, password, phonenumber, username });
+  };
   return (
     <Container>
       <Vijay>விஜய் </Vijay>
@@ -170,39 +184,65 @@ const SignupPage = () => {
       <LoginHolder>
         <Text1> Create Account</Text1>
         <Text2>Your name</Text2>
-        <Input type="text" placeholder="" />
+        <Input
+          type="text"
+          placeholder=""
+          onChange={(e) => setUsername(e.target.value)}
+        />
 
         <Text2>Mobile number</Text2>
-        <Input type="tel" placeholder="+91" />
+        <Input
+          type="tel"
+          placeholder="+91"
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
 
         <Text2>Email (Optional)</Text2>
-        <Input type="email" placeholder="" />
+        <Input
+          type="email"
+          placeholder=""
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
         <Text2>Password</Text2>
-        <Input type="email" placeholder="at least 6 characters" />
+        <Input
+          type="password"
+          placeholder="at least 6 characters"
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <Small>Passwords must be at least 6 characters.</Small>
 
-
-        <Small>By enrolling your mobile phone number, you consent to receive automated security notifications via text message from Amazon. Message and data rates may apply.</Small>
-        <Button>Continue</Button>
-
-        <FontMini>
-         
-Already have an account?  <Link to={"/login"}> <span  style={{color:"blue",cursor:"pointer"}}>Sign in</span></Link>   <MdOutlineArrowRight />
-
-        </FontMini> 
+        <Small>
+          By enrolling your mobile phone number, you consent to receive
+          automated security notifications via text message from Amazon. Message
+          and data rates may apply.
+        </Small>
+        <Button onClick={handleClick}>Continue</Button>
 
         <FontMini>
+          Already have an account?{" "}
+          <Link to={"/login"}>
+            {" "}
+            <span style={{ color: "blue", cursor: "pointer" }}>Sign in</span>
+          </Link>{" "}
+          <MdOutlineArrowRight />
+        </FontMini>
 
-        Buying for work? <span  style={{color:"blue",cursor:"pointer"}}> Create a free business account </span>   <MdOutlineArrowRight />
+        <FontMini>
+          Buying for work?{" "}
+          <span style={{ color: "blue", cursor: "pointer" }}>
+            {" "}
+            Create a free business account{" "}
+          </span>{" "}
+          <MdOutlineArrowRight />
         </FontMini>
 
         <Center>
-        By creating an account or logging in, you agree to Amazon’s Conditions of Use and Privacy Policy.
+          By creating an account or logging in, you agree to Amazon’s Conditions
+          of Use and Privacy Policy.
         </Center>
       </LoginHolder>
 
-    
       <HrFull />
 
       <Grayholder>

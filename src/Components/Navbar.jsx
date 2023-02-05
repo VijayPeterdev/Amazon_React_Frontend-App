@@ -2,9 +2,15 @@ import React from "react";
 import styled from "styled-components";
 import LogoAmazon from "../Assets/amazonlogo.png";
 import { BsSearch } from "react-icons/bs";
-import { AiOutlineDown, AiOutlineShoppingCart } from "react-icons/ai";
+import { AiOutlineDown, AiOutlinePoweroff, AiOutlineShoppingCart } from "react-icons/ai";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { Link } from "react-router-dom";
+import { useDispatch} from 'react-redux'
+
+// useSelector method to get the state value
+import {  useSelector } from "react-redux";
+import { logout } from "../Redux/userRedux";
+
 
 const Container = styled.div`
   width: 100%;
@@ -174,6 +180,16 @@ const CardSection = styled.div`
 `;
 
 const Navbar = () => {
+
+  // get the state  value
+  const cart = useSelector(state=> state.cart);
+  const user = useSelector(state=> state.user.userdata);
+
+
+  console.log(cart)
+
+  const dispatch = useDispatch();
+
   return (
     <Container>
       <Wrapper>
@@ -223,7 +239,7 @@ const Navbar = () => {
           </Launguage>
         </Center>
         <Right>
-          <Link to={"/login"}>
+          <Link style={{color:"inherit", listStyle:"none"}} to={"/login"}>
             <LoginSection>
               <Text1>hello , signin</Text1>
               <Text2>Account & Lists</Text2>
@@ -234,12 +250,16 @@ const Navbar = () => {
             <Text1>Returns</Text1>
             <Text2>& Orders</Text2>
           </LoginSection>
-          <Link to={"/cart"}>
+          <Link  style={{color:"inherit",listStyle:"none"}} to={"/cart"}>
             <CardSection>
               <AiOutlineShoppingCart fontSize={"22px"} />
-              <span>Cart</span>
+              <span>Cart {cart.cartTotalQuanity} </span>
             </CardSection>
           </Link>
+
+          {user &&  <AiOutlinePoweroff style={{
+            cursor:"pointer"
+          }}  onClick={() => dispatch(logout())} />} 
         </Right>
       </Wrapper>
     </Container>
